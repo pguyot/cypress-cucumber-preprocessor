@@ -6,7 +6,7 @@ import util from "util";
 
 import debug from "./debug";
 
-import { ensureIsRelative } from "./helpers";
+import { ensureIsRelative } from "./helpers/paths";
 
 import { isString, isStringOrStringArray, isBoolean } from "./type-guards";
 

@@ -40,7 +40,7 @@ import { notNull } from "./type-guards";
 
 import { getTags } from "./environment-helpers";
 
-import { ensureIsAbsolute } from "./helpers";
+import { ensureIsAbsolute } from "./helpers/paths";
 
 import { createTimestamp } from "./messages-helpers";
 

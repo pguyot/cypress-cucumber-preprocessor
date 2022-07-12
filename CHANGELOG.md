@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Add a very rudimentary way of diagnosing validity of steps, IE. whether each step is matching one, and only one, step definition, fixes [#754](https://github.com/badeball/cypress-cucumber-preprocessor/issues/754).
+
 ## v12.2.0
 
 - Total execution time is correctly shown in HTML reports, fixes [#813](https://github.com/badeball/cypress-cucumber-preprocessor/issues/813).

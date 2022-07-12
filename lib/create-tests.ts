@@ -16,9 +16,11 @@ import {
   Registry,
 } from "./registry";
 
-import { collectTagNames, traverseGherkinDocument } from "./ast-helpers";
-
-import { YieldType } from "./types";
+import {
+  collectTagNames,
+  createAstIdMap,
+  traverseGherkinDocument,
+} from "./ast-helpers";
 
 import {
   HOOK_FAILURE_EXPR,
@@ -36,6 +38,10 @@ import { notNull } from "./type-guards";
 import { looksLikeOptions, tagToCypressOptions } from "./tag-parser";
 
 import { createTimestamp, duration } from "./messages-helpers";
+
+import { createWeakCache } from "./helpers/maps";
+
+import { stripIndent } from "./helpers/strings";
 
 declare global {
   namespace globalThis {
@@ -129,28 +135,6 @@ function collectExampleIds(examples: readonly messages.Examples[]) {
     .reduce((acum, el) => acum.concat(el), []);
 }
 
-function minIndent(content: string) {
-  const match = content.match(/^[ \t]*(?=\S)/gm);
-
-  if (!match) {
-    return 0;
-  }
-
-  return match.reduce((r, a) => Math.min(r, a.length), Infinity);
-}
-
-function stripIndent(content: string) {
-  const indent = minIndent(content);
-
-  if (indent === 0) {
-    return content;
-  }
-
-  const regex = new RegExp(`^[ \\t]{${indent}}`, "gm");
-
-  return content.replace(regex, "");
-}
-
 function createFeature(context: CompositionContext, feature: messages.Feature) {
   describe(feature.name || "<unamed feature>", () => {
     if (feature.children) {
@@ -207,40 +191,7 @@ function createRule(context: CompositionContext, rule: messages.Rule) {
   });
 }
 
-function createWeakCache<K extends object, V>(mapper: (key: K) => V) {
-  return {
-    cache: new WeakMap<K, V>(),
-
-    get(key: K) {
-      const cacheHit = this.cache.get(key);
-
-      if (cacheHit) {
-        return cacheHit;
-      }
-
-      const value = mapper(key);
-      this.cache.set(key, value);
-      return value;
-    },
-  };
-}
-
-const gherkinDocumentsAstIdMaps = createWeakCache(
-  (key: messages.GherkinDocument) => {
-    const astIdMap = new Map<
-      string,
-      YieldType<ReturnType<typeof traverseGherkinDocument>>
-    >();
-
-    for (const node of traverseGherkinDocument(key)) {
-      if ("id" in node && node.id) {
-        astIdMap.set(node.id, node);
-      }
-    }
-
-    return astIdMap;
-  }
-);
+const gherkinDocumentsAstIdMaps = createWeakCache(createAstIdMap);
 
 function createScenario(
   context: CompositionContext,

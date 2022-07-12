@@ -13,4 +13,5 @@
 * [Localisation](localisation.md)
 * [Configuration](configuration.md)
 * [Test configuration](test-configuration.md)
+* [Diagnostics / dry run](diagnostics.md)
 * [Frequently asked questions](faq.md)

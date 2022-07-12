@@ -22,7 +22,7 @@ import {
 
 import { notNull } from "./type-guards";
 
-import { ensureIsRelative } from "./helpers";
+import { ensureIsRelative } from "./helpers/paths";
 
 import { rebuildOriginalConfigObject } from "./add-cucumber-preprocessor-plugin";
 

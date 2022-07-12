@@ -2,6 +2,7 @@ import util from "util";
 import { Given, When, Then } from "@cucumber/cucumber";
 import assert from "assert";
 import childProcess from "child_process";
+import stripAnsi from "strip-ansi";
 import { isPost10, isPre10 } from "../support/helpers";
 
 function execAsync(
@@ -19,7 +20,7 @@ function execAsync(
 }
 
 When("I run cypress", { timeout: 60 * 1000 }, async function () {
-  await this.run();
+  await this.runCypress();
 });
 
 When(
@@ -34,7 +35,7 @@ When(
     // Drop 1st arg, which is the path of node.
     const [, ...args] = JSON.parse(stdout);
 
-    await this.run(args);
+    await this.runCypress(args);
   }
 );
 
@@ -42,9 +43,13 @@ When(
   "I run cypress with environment variables",
   { timeout: 60 * 1000 },
   async function (table) {
-    await this.run([], Object.fromEntries(table.rows()));
+    await this.runCypress([], Object.fromEntries(table.rows()));
   }
 );
+
+When("I run diagnostics", { timeout: 60 * 1000 }, async function () {
+  await this.runDiagnostics();
+});
 
 Then("it passes", function () {
   assert.equal(this.lastRun.exitCode, 0, "Expected a zero exit code");
@@ -137,7 +142,7 @@ Then(
 
 Then("the output should contain", function (content) {
   assert.match(
-    this.lastRun.stdout.replaceAll("\\", "/"),
+    stripAnsi(this.lastRun.stdout).replaceAll("\\", "/"),
     new RegExp(rescape(content))
   );
 });
