@@ -18,7 +18,7 @@ import debug from "./debug";
 
 import { IPreprocessorConfiguration } from "./preprocessor-configuration";
 
-import { ensureIsAbsolute } from "./helpers";
+import { ensureIsAbsolute } from "./helpers/paths";
 
 export async function getStepDefinitionPaths(
   stepDefinitionPatterns: string[]

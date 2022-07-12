@@ -3,6 +3,7 @@ import path from "path";
 import childProcess from "child_process";
 import { PassThrough, Readable } from "stream";
 import { WritableStreamBuffer } from "stream-buffers";
+import { bin } from "../../package.json";
 
 const projectPath = path.join(__dirname, "..", "..");
 
@@ -20,7 +21,7 @@ function combine(...streams: Readable[]) {
 }
 
 class World {
-  async run(this: IWorld, extraArgs = [], extraEnv = {}) {
+  async runCypress(this: IWorld, extraArgs = [], extraEnv = {}) {
     const child = childProcess.spawn(
       path.join(
         projectPath,
@@ -35,6 +36,52 @@ class World {
         env: {
           ...process.env,
           NO_COLOR: "1",
+          ...extraEnv,
+        },
+      }
+    );
+
+    const combined = combine(child.stdout, child.stderr);
+
+    if (process.env.DEBUG) {
+      child.stdout.pipe(process.stdout);
+      child.stderr.pipe(process.stderr);
+    }
+
+    const stdoutBuffer = child.stdout.pipe(new WritableStreamBuffer());
+    const stderrBuffer = child.stderr.pipe(new WritableStreamBuffer());
+    const outputBuffer = combined.pipe(new WritableStreamBuffer());
+
+    const exitCode = await new Promise<number>((resolve) => {
+      child.on("close", resolve);
+    });
+
+    const stdout = stdoutBuffer.getContentsAsString() || "";
+    const stderr = stderrBuffer.getContentsAsString() || "";
+    const output = outputBuffer.getContentsAsString() || "";
+
+    this.verifiedLastRunError = false;
+
+    this.lastRun = {
+      stdout,
+      stderr,
+      output,
+      exitCode,
+    };
+  }
+
+  async runDiagnostics(this: IWorld, extraArgs = [], extraEnv = {}) {
+    const child = childProcess.spawn(
+      "node",
+      [
+        path.join(projectPath, bin["cypress-cucumber-diagnostics"]),
+        ...extraArgs,
+      ],
+      {
+        stdio: ["ignore", "pipe", "pipe"],
+        cwd: this.tmpDir,
+        env: {
+          ...process.env,
           ...extraEnv,
         },
       }

@@ -39,7 +39,7 @@ import { notNull } from "./type-guards";
 
 import { getTags } from "./environment-helpers";
 
-import { ensureIsAbsolute } from "./helpers";
+import { ensureIsAbsolute } from "./helpers/paths";
 
 /**
  * Work-around for the fact that some Cypress versions pre v10 were missing this property in their types.
