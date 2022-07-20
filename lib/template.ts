@@ -109,13 +109,14 @@ export async function compile(
     const { default: createTests } = require(${createTestsPath});
     const { withRegistry } = require(${registryPath});
 
-    const registry = withRegistry(() => {
-      ${stepDefinitionPaths
-        .map(
-          (stepDefinitionPath) => `require(${stringify(stepDefinitionPath)});`
-        )
-        .join("\n    ")}
-    });
+    const registry = withRegistry(
+      false,
+      () => {
+        ${stepDefinitionPaths
+          .map((stepDefintion) => `require(${stringify(stepDefintion)});`)
+          .join("\n    ")}
+      }
+    );
 
     registry.finalize();
 
