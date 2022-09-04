@@ -4,10 +4,10 @@ import { assertAndReturn } from "./assertions";
 import { collectTagNames } from "./ast-helpers";
 
 import {
-  INTERNAL_PROPERTY_NAME,
+  INTERNAL_SPEC_PROPERTIES,
   TASK_CREATE_STRING_ATTACHMENT,
 } from "./constants";
-import { InternalProperties } from "./create-tests";
+import { InternalSpecProperties } from "./create-tests";
 
 import DataTable from "./data_table";
 
@@ -105,7 +105,7 @@ export function attach(data: string | ArrayBuffer, mediaType?: string) {
 }
 
 function isFeature() {
-  return Cypress.env(INTERNAL_PROPERTY_NAME) != null;
+  return Cypress.env(INTERNAL_SPEC_PROPERTIES) != null;
 }
 
 export const NOT_FEATURE_ERROR =
@@ -113,9 +113,9 @@ export const NOT_FEATURE_ERROR =
 
 function doesFeatureMatch(expression: string) {
   const { pickle } = assertAndReturn(
-    Cypress.env(INTERNAL_PROPERTY_NAME),
+    Cypress.env(INTERNAL_SPEC_PROPERTIES),
     NOT_FEATURE_ERROR
-  ) as InternalProperties;
+  ) as InternalSpecProperties;
 
   return parse(expression).evaluate(collectTagNames(pickle.tags));
 }

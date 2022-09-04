@@ -10,27 +10,7 @@ JSON reports can be enabled using the `json.enabled` property. The preprocessor 
 }
 ```
 
-This **requires** you to have registered this module in your [configuration file](https://docs.cypress.io/guides/references/configuration#Configuration-File), as shown below.
-
-```ts
-import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
-
-export default defineConfig({
-  e2e: {
-    async setupNodeEvents(
-      on: Cypress.PluginEvents,
-      config: Cypress.PluginConfigOptions
-    ) {
-      await addCucumberPreprocessorPlugin(on, config);
-
-      // Make sure to return the config object as it might have been modified by the plugin.
-      return config;
-    },
-  },
-});
-```
-
-This also **requires** you to have downloaded and installed the [cucumber-json-formatter](https://github.com/cucumber/json-formatter) **yourself**. Arch Linux users can install it from [AUR](https://aur.archlinux.org/packages/cucumber-json-formatter).
+This **requires** you to have downloaded and installed the [cucumber-json-formatter](https://github.com/cucumber/json-formatter) **yourself**. Arch Linux users can install it from [AUR](https://aur.archlinux.org/packages/cucumber-json-formatter).
 
 The location of the executable is configurable through the `json.formatter` property, but it will by default search for `cucumber-json-formatter` in your `PATH`.
 

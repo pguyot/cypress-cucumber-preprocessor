@@ -9,23 +9,3 @@ HTML reports can be enabled using the `html.enabled` property. The preprocessor 
   }
 }
 ```
-
-This **requires** you to have registered this module in your [configuration file](https://docs.cypress.io/guides/references/configuration#Configuration-File), as shown below.
-
-```ts
-import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
-
-export default defineConfig({
-  e2e: {
-    async setupNodeEvents(
-      on: Cypress.PluginEvents,
-      config: Cypress.PluginConfigOptions
-    ) {
-      await addCucumberPreprocessorPlugin(on, config);
-
-      // Make sure to return the config object as it might have been modified by the plugin.
-      return config;
-    },
-  },
-});
-```

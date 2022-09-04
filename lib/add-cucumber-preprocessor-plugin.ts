@@ -28,6 +28,7 @@ import {
 import {
   HOOK_FAILURE_EXPR,
   INTERNAL_PROPERTY_NAME,
+  INTERNAL_SUITE_PROPERTIES,
   TASK_APPEND_MESSAGES,
   TASK_CREATE_STRING_ATTACHMENT,
   TASK_TEST_STEP_STARTED,
@@ -325,6 +326,8 @@ export default async function addCucumberPreprocessorPlugin(
   config: Cypress.PluginConfigOptions,
   options: AddOptions = {}
 ) {
+  config.env[INTERNAL_SUITE_PROPERTIES] = { isEventHandlersAttached: true };
+
   const preprocessor = await resolve(config, config.env, "/");
 
   if (!options.omitBeforeRunHandler) {

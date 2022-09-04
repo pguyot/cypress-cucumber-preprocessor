@@ -10,8 +10,10 @@ Feature: webpack + typescript
     And a file named "cypress/plugins/index.js" or "setupNodeEvents.js" (depending on Cypress era) with:
       """
       const webpack = require("@cypress/webpack-preprocessor");
+      const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
 
       module.exports = async (on, config) => {
+        await addCucumberPreprocessorPlugin(on, config);
         on(
           "file:preprocessor",
           webpack({
@@ -44,6 +46,7 @@ Feature: webpack + typescript
             }
           })
         );
+        return config;
       };
       """
     And a file named "cypress/support/step_definitions/steps.ts" with:

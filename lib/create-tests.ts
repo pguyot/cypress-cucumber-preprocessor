@@ -4,7 +4,7 @@ import parse from "@cucumber/tag-expressions";
 
 import { v4 as uuid } from "uuid";
 
-import { assertAndReturn } from "./assertions";
+import { assertAndReturn, fail } from "./assertions";
 
 import DataTable from "./data_table";
 
@@ -23,6 +23,8 @@ import { YieldType } from "./types";
 import {
   HOOK_FAILURE_EXPR,
   INTERNAL_PROPERTY_NAME,
+  INTERNAL_SPEC_PROPERTIES,
+  INTERNAL_SUITE_PROPERTIES,
   TASK_APPEND_MESSAGES,
   TASK_TEST_STEP_STARTED,
 } from "./constants";
@@ -83,7 +85,7 @@ interface IStep {
   pickleStep?: messages.PickleStep;
 }
 
-export interface InternalProperties {
+export interface InternalSpecProperties {
   pickle: messages.Pickle;
   testCaseStartedId: string;
   currentStep?: IStep;
@@ -91,8 +93,18 @@ export interface InternalProperties {
   remainingSteps: IStep[];
 }
 
-function retrieveInternalProperties(): InternalProperties {
-  return Cypress.env(INTERNAL_PROPERTY_NAME);
+export interface InternalSuiteProperties {
+  isEventHandlersAttached?: boolean;
+}
+
+function retrieveInternalSpecProperties(): InternalSpecProperties {
+  return Cypress.env(INTERNAL_SPEC_PROPERTIES);
+}
+
+function retrieveInternalSuiteProperties():
+  | InternalSuiteProperties
+  | undefined {
+  return Cypress.env(INTERNAL_SUITE_PROPERTIES);
 }
 
 function findPickleById(context: CompositionContext, astId: string) {
@@ -339,14 +351,14 @@ function createPickle(
 
   let attempt = 0;
 
-  const internalProperties: InternalProperties = {
+  const internalProperties: InternalSpecProperties = {
     pickle,
     testCaseStartedId: uuid(),
     allSteps: steps,
     remainingSteps: [...steps],
   };
 
-  const internalEnv = { [INTERNAL_PROPERTY_NAME]: internalProperties };
+  const internalEnv = { [INTERNAL_SPEC_PROPERTIES]: internalProperties };
 
   const suiteOptions = tags
     .filter(looksLikeOptions)
@@ -360,7 +372,8 @@ function createPickle(
   }
 
   it(scenarioName, suiteOptions, function () {
-    const { remainingSteps, testCaseStartedId } = retrieveInternalProperties();
+    const { remainingSteps, testCaseStartedId } =
+      retrieveInternalSpecProperties();
 
     assignRegistry(registry);
 
@@ -686,10 +699,18 @@ export default function createTests(
     globalThis[INTERNAL_PROPERTY_NAME] = true;
   }
 
+  before(function () {
+    if (!retrieveInternalSuiteProperties()?.isEventHandlersAttached) {
+      fail(
+        "Missing preprocessor event handlers (this usally means you've not invoked `addCucumberPreprocessorPlugin()` or not returned the config object in `setupNodeEvents()`)"
+      );
+    }
+  });
+
   afterEach(function () {
     freeRegistry();
 
-    const properties = retrieveInternalProperties();
+    const properties = retrieveInternalSpecProperties();
 
     const { testCaseStartedId, remainingSteps } = properties;
 

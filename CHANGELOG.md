@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 - Total execution time is correctly shown in HTML reports, fixes [#813](https://github.com/badeball/cypress-cucumber-preprocessor/issues/813).
 
+- Validate inclusion of `addCucumberPreprocessorPlugin()` in `setupNodeEvents()`, fixes [#820](https://github.com/badeball/cypress-cucumber-preprocessor/issues/820).
+
 ## v12.1.0
 
 - Start time and execution time is shown in HTML reports, fixes [#798](https://github.com/badeball/cypress-cucumber-preprocessor/issues/798).

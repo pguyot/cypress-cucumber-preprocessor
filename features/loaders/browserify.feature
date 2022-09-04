@@ -10,9 +10,11 @@ Feature: browserify + typescript
     And a file named "cypress/plugins/index.js" or "setupNodeEvents.js" (depending on Cypress era) with:
       """
       const browserify = require("@cypress/browserify-preprocessor");
+      const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
       const { preprocessor } = require("@badeball/cypress-cucumber-preprocessor/browserify");
 
       module.exports = async (on, config) => {
+        await addCucumberPreprocessorPlugin(on, config);
         on(
           "file:preprocessor",
           preprocessor(config, {
@@ -20,6 +22,7 @@ Feature: browserify + typescript
             typescript: require.resolve("typescript")
           })
         );
+        return config;
       };
       """
     And a file named "cypress/support/step_definitions/steps.ts" with:
