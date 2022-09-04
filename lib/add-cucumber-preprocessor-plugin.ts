@@ -41,6 +41,8 @@ import { getTags } from "./environment-helpers";
 
 import { ensureIsAbsolute } from "./helpers";
 
+import { createTimestamp } from "./messages-helpers";
+
 /**
  * Work-around for the fact that some Cypress versions pre v10 were missing this property in their types.
  */
@@ -84,12 +86,26 @@ export async function beforeRunHandler(config: Cypress.PluginConfigOptions) {
   );
 
   await fs.rm(messagesPath, { force: true });
+
+  const testRunStarted: messages.Envelope = {
+    testRunStarted: {
+      timestamp: createTimestamp(),
+    },
+  };
+
+  await fs.mkdir(path.dirname(messagesPath), { recursive: true });
+
+  await fs.writeFile(messagesPath, JSON.stringify(testRunStarted) + "\n");
 }
 
 export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
   const preprocessor = await resolve(config, config.env, "/");
 
-  if (!preprocessor.json.enabled && !preprocessor.html.enabled) {
+  if (
+    !preprocessor.messages.enabled &&
+    !preprocessor.json.enabled &&
+    !preprocessor.html.enabled
+  ) {
     return;
   }
 
@@ -102,6 +118,22 @@ export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
     await fs.access(messagesPath, fsConstants.F_OK);
   } catch {
     return;
+  }
+
+  if (preprocessor.messages.enabled) {
+    const testRunFinished: messages.Envelope = {
+      testRunFinished: {
+        /**
+         * We're missing a "success" attribute here, but cucumber-js doesn't output it, so I won't.
+         * Mostly because I don't want to look into the semantics of it right now.
+         */
+        timestamp: createTimestamp(),
+      } as messages.TestRunFinished,
+    };
+
+    await fs.writeFile(messagesPath, JSON.stringify(testRunFinished) + "\n", {
+      flag: "a",
+    });
   }
 
   if (preprocessor.json.enabled) {
@@ -213,8 +245,6 @@ export async function afterSpecHandler(
       )
     );
   } else {
-    await fs.mkdir(path.dirname(messagesPath), { recursive: true });
-
     await fs.writeFile(
       messagesPath,
       currentSpecMessages.map((message) => JSON.stringify(message)).join("\n") +

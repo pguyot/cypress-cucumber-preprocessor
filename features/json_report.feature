@@ -296,11 +296,11 @@ Feature: JSON formatter
       """
     When I run cypress
     Then it fails
-    And there should be no JSON output
     And the output should contain
       """
       Hook failures can't be represented in JSON reports, thus none is created for cypress/e2e/a.feature.
       """
+    And the JSON report shouldn't contain any specs
 
   Scenario: failing beforeEach hook
     Given a file named "cypress/e2e/a.feature" with:
@@ -322,11 +322,11 @@ Feature: JSON formatter
       """
     When I run cypress
     Then it fails
-    And there should be no JSON output
     And the output should contain
       """
       Hook failures can't be represented in JSON reports, thus none is created for cypress/e2e/a.feature.
       """
+    And the JSON report shouldn't contain any specs
 
   Scenario: failing afterEach hook
     Given a file named "cypress/e2e/a.feature" with:
@@ -348,11 +348,11 @@ Feature: JSON formatter
       """
     When I run cypress
     Then it fails
-    And there should be no JSON output
     And the output should contain
       """
       Hook failures can't be represented in JSON reports, thus none is created for cypress/e2e/a.feature.
       """
+    And the JSON report shouldn't contain any specs
 
   Scenario: failing after hook
     Given a file named "cypress/e2e/a.feature" with:
@@ -374,8 +374,8 @@ Feature: JSON formatter
       """
     When I run cypress
     Then it fails
-    And there should be no JSON output
     And the output should contain
       """
       Hook failures can't be represented in JSON reports, thus none is created for cypress/e2e/a.feature.
       """
+    And the JSON report shouldn't contain any specs

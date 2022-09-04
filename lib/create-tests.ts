@@ -33,6 +33,8 @@ import { notNull } from "./type-guards";
 
 import { looksLikeOptions, tagToCypressOptions } from "./tag-parser";
 
+import { createTimestamp, duration } from "./messages-helpers";
+
 declare global {
   namespace globalThis {
     var __cypress_cucumber_preprocessor_dont_use_this: true | undefined;
@@ -113,34 +115,6 @@ function collectExampleIds(examples: readonly messages.Examples[]) {
       );
     })
     .reduce((acum, el) => acum.concat(el), []);
-}
-
-type StrictTimestamp = {
-  seconds: number;
-  nanos: number;
-};
-
-function createTimestamp(): StrictTimestamp {
-  const now = new Date().getTime();
-
-  const seconds = Math.floor(now / 1000);
-
-  const nanos = (now - seconds * 1000) * 1000000;
-
-  return {
-    seconds,
-    nanos,
-  };
-}
-
-function duration(
-  start: StrictTimestamp,
-  end: StrictTimestamp
-): StrictTimestamp {
-  return {
-    seconds: end.seconds - start.seconds,
-    nanos: end.nanos - start.nanos,
-  };
 }
 
 function minIndent(content: string) {
@@ -677,12 +651,6 @@ export default function createTests(
     });
   }
 
-  messages.push({
-    testRunStarted: {
-      timestamp: createTimestamp(),
-    },
-  });
-
   const tagsInDocument = collectTagNamesFromGherkinDocument(gherkinDocument);
 
   const testFilter =
@@ -836,16 +804,6 @@ export default function createTests(
   });
 
   after(function () {
-    messages.push({
-      testRunFinished: {
-        /**
-         * We're missing a "success" attribute here, but cucumber-js doesn't output it, so I won't.
-         * Mostly because I don't want to look into the semantics of it right now.
-         */
-        timestamp: createTimestamp(),
-      } as messages.TestRunFinished,
-    });
-
     if (messagesEnabled) {
       cy.task(TASK_APPEND_MESSAGES, messages, { log: false });
     }

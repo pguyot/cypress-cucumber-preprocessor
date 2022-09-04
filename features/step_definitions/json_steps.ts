@@ -169,3 +169,17 @@ Then(
     assert.strictEqual(actualHeight, expectedDimensions.height);
   }
 );
+
+Then("the JSON report shouldn't contain any specs", async function () {
+  const absolutejsonPath = path.join(this.tmpDir, "cucumber-report.json");
+
+  const jsonFile = await fs.readFile(absolutejsonPath);
+
+  const actualJsonOutput = JSON.parse(jsonFile.toString());
+
+  if (actualJsonOutput.length > 0) {
+    throw new Error(
+      `Expected to find zero specs, but found ${actualJsonOutput.length}`
+    );
+  }
+});
