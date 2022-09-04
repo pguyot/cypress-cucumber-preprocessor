@@ -4,23 +4,42 @@
 $ npm install @badeball/cypress-cucumber-preprocessor
 ```
 
-# Configuration
+# Example setup
 
-[Configure](https://docs.cypress.io/guides/references/configuration) `specPattern` with `"**/*.feature"`, using EG. `cypress.config.ts`.
+[Configure](https://docs.cypress.io/guides/references/configuration) `specPattern` with `"**/*.feature"` and `setupNodeEvents` with a bundler, using EG. `cypress.config.ts`.
 
-```js
+```ts
 import { defineConfig } from "cypress";
+import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
+import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
 export default defineConfig({
   e2e: {
-    specPattern: "**/*.feature"
-  }
+    specPattern: "**/*.feature",
+    async setupNodeEvents(
+      on: Cypress.PluginEvents,
+      config: Cypress.PluginConfigOptions
+    ): Promise<Cypress.PluginConfigOptions> {
+      await addCucumberPreprocessorPlugin(on, config);
+
+      on(
+        "file:preprocessor",
+        createBundler({
+          plugins: [createEsbuildPlugin(config)],
+        })
+      );
+
+      // Make sure to return the config object as it might have been modified by the plugin.
+      return config;
+    },
+  },
 });
 ```
 
-Then configure your preferred bundler to process features files. See [examples/](../examples) for how-to using Browserify, Esbuild or Webpack. Esbuild is the recommended bundler if you have no particular requirements (it's by far the fastest).
+The example above illustrates how to use the preprocessor together with Esbuild, which is the recommended bundler if you have no particular requirements (it's by far the fastest). See [examples/](../examples) for how-to using Browserify, Esbuild or Webpack, in all language flavors (CJS, ESM, TS).
 
-Read more about configuration options at [docs/configuration.md](configuration.md).
+Read more about the preprocessor's configuration options at [docs/configuration.md](configuration.md).
 
 # Write a test
 
