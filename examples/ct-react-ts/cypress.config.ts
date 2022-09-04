@@ -1,8 +1,7 @@
 import { defineConfig } from "cypress";
-
 import * as Webpack from "webpack";
-
 import { devServer } from "@cypress/webpack-dev-server";
+import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
 
 const webpackConfig = (
   cypressConfig: Cypress.PluginConfigOptions
@@ -47,6 +46,13 @@ export default defineConfig({
         framework: "react",
         webpackConfig: webpackConfig(devServerConfig.cypressConfig),
       });
+    },
+    async setupNodeEvents(on, config) {
+      // This is required for the preprocessor to be able to generate JSON reports after each run, and more.
+      await addCucumberPreprocessorPlugin(on, config);
+
+      // Make sure to return the config object as it might have been modified by the plugin.
+      return config;
     },
   },
 });
