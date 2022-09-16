@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v13.0.0
 
 - Add a very rudimentary way of diagnosing validity of steps, IE. whether each step is matching one, and only one, step definition, fixes [#754](https://github.com/badeball/cypress-cucumber-preprocessor/issues/754).
 
