@@ -62,13 +62,7 @@ export function defineStep<T extends unknown[]>(
   throw createUnimplemented();
 }
 
-export {
-  defineStep as Given,
-  defineStep as When,
-  defineStep as Then,
-  defineStep as And,
-  defineStep as But,
-};
+export { defineStep as Given, defineStep as When, defineStep as Then };
 
 export function Step(
   world: Mocha.Context,

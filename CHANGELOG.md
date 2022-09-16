@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 - Add a very rudimentary way of diagnosing validity of steps, IE. whether each step is matching one, and only one, step definition, fixes [#754](https://github.com/badeball/cypress-cucumber-preprocessor/issues/754).
 
+- Remove `And` and `But` from the public API, fixes [#821](https://github.com/badeball/cypress-cucumber-preprocessor/issues/821).
+
 ## v12.2.0
 
 - Total execution time is correctly shown in HTML reports, fixes [#813](https://github.com/badeball/cypress-cucumber-preprocessor/issues/813).
