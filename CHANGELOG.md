@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 - Remove `And` and `But` from the public API, fixes [#821](https://github.com/badeball/cypress-cucumber-preprocessor/issues/821).
 
+- Output snippet suggestions upon missing step definition, fixes [#799](https://github.com/badeball/cypress-cucumber-preprocessor/issues/799).
+
 ## v12.2.0
 
 - Total execution time is correctly shown in HTML reports, fixes [#813](https://github.com/badeball/cypress-cucumber-preprocessor/issues/813).

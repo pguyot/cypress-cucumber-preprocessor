@@ -2,6 +2,11 @@ import messages from "@cucumber/messages";
 
 import parse from "@cucumber/tag-expressions";
 
+import {
+  CucumberExpressionGenerator,
+  ParameterTypeRegistry,
+} from "@cucumber/cucumber-expressions";
+
 import { v4 as uuid } from "uuid";
 
 import { assertAndReturn, fail } from "./assertions";
@@ -41,7 +46,9 @@ import { createTimestamp, duration } from "./messages-helpers";
 
 import { createWeakCache } from "./helpers/maps";
 
-import { stripIndent } from "./helpers/strings";
+import { indent, stripIndent } from "./helpers/strings";
+
+import { generateSnippet } from "./snippets";
 
 declare global {
   namespace globalThis {
@@ -467,7 +474,11 @@ function createPickle(
             } catch (e) {
               if (e instanceof MissingDefinitionError) {
                 throw new Error(
-                  createMissingStepDefinitionMessage(context, text)
+                  createMissingStepDefinitionMessage(
+                    context,
+                    pickleStep,
+                    context.registry.parameterTypeRegistry
+                  )
                 );
               } else {
                 throw e;
@@ -798,7 +809,8 @@ function strictIsInteractive(): boolean {
 
 function createMissingStepDefinitionMessage(
   context: CompositionContext,
-  text: string
+  pickleStep: messages.PickleStep,
+  parameterTypeRegistry: ParameterTypeRegistry
 ) {
   const noStepDefinitionPathsTemplate = `
     Step implementation missing for "<text>".
@@ -812,6 +824,10 @@ function createMissingStepDefinitionMessage(
     <step-definition-patterns>
 
     These patterns matched **no files** containing step definitions. This almost certainly means that you have misconfigured \`stepDefinitions\`.
+
+    You can implement it using the suggestion(s) below.
+
+    <snippets>
   `;
 
   const someStepDefinitionPathsTemplate = `
@@ -830,6 +846,10 @@ function createMissingStepDefinitionMessage(
     <step-definition-paths>
 
     However, none of these files contained a step definition matching "<text>".
+
+    You can implement it using the suggestion(s) below.
+
+    <snippets>
   `;
 
   const { stepDefinitionHints } = context;
@@ -845,8 +865,24 @@ function createMissingStepDefinitionMessage(
   const prettyPrintList = (items: string[]) =>
     items.map((item) => "  - " + maybeEscape(item)).join("\n");
 
+  let parameter: "dataTable" | "docString" | null = null;
+
+  if (pickleStep.argument?.dataTable) {
+    parameter = "dataTable";
+  } else if (pickleStep.argument?.docString) {
+    parameter = "docString";
+  }
+
+  const snippets = new CucumberExpressionGenerator(
+    () => parameterTypeRegistry.parameterTypes
+  )
+    .generateExpressions(pickleStep.text)
+    .map((expression) => generateSnippet(expression, parameter))
+    .map((snippet) => indent(snippet, { count: 2 }))
+    .join("\n\n");
+
   return stripIndent(template)
-    .replaceAll("<text>", text)
+    .replaceAll("<text>", pickleStep.text)
     .replaceAll(
       "<step-definitions>",
       prettyPrintList([stepDefinitionHints.stepDefinitions].flat())
@@ -858,5 +894,6 @@ function createMissingStepDefinitionMessage(
     .replaceAll(
       "<step-definition-paths>",
       prettyPrintList(stepDefinitionHints.stepDefinitionPaths)
-    );
+    )
+    .replaceAll("<snippets>", snippets);
 }

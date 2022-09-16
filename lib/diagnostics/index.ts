@@ -26,6 +26,7 @@ import {
   UnmatchedStep,
 } from "./diagnose";
 import { assertAndReturn } from "../assertions";
+import { generateSnippet } from "../snippets";
 
 const TEMPLATE = `
 Given("[expression]", function ([arguments]) {
@@ -281,33 +282,13 @@ export function createUnmatchedStep(
     const generatedExpressions =
       cucumberExpressionGenerator.generateExpressions(unmatch.step.text);
 
-    const stepParameterNames = [];
-
-    if (unmatch.argument === "dataTable") {
-      stepParameterNames.push("dataTable");
-    } else if (unmatch.argument === "docString") {
-      stepParameterNames.push("docString");
-    }
-
     for (const generatedExpression of generatedExpressions) {
-      const expression = generatedExpression.source
-        .replace(/\\/g, "\\\\")
-        .replace(/"/g, '\\"');
-
-      const args = generatedExpression.parameterNames
-        .concat(stepParameterNames)
-        .join(", ");
-
       append("");
 
       append(
-        indent(
-          TEMPLATE.replace("[expression]", expression).replace(
-            "[arguments]",
-            args
-          ),
-          { count: 2 }
-        )
+        indent(generateSnippet(generatedExpression, unmatch.argument), {
+          count: 2,
+        })
       );
     }
   });
