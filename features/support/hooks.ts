@@ -21,11 +21,6 @@ Before(async function ({ gherkinDocument, pickle }) {
 
   await fs.rm(this.tmpDir, { recursive: true, force: true });
 
-  await writeFile(
-    path.join(this.tmpDir, ".cypress-cucumber-preprocessorrc"),
-    "{}"
-  );
-
   await writeFile(path.join(this.tmpDir, "cypress", "support", "e2e.js"), "");
 
   if (isPost10()) {
@@ -74,6 +69,13 @@ Before(async function ({ gherkinDocument, pickle }) {
       "cypress-cucumber-preprocessor"
     ),
     "dir"
+  );
+});
+
+Before({ tags: "not @no-default-preprocessor-config" }, async function () {
+  await writeFile(
+    path.join(this.tmpDir, ".cypress-cucumber-preprocessorrc"),
+    "{}"
   );
 });
 
