@@ -5,6 +5,7 @@
 * [I get `spawn cucumber-json-formatter ENOENT`](#i-get-spawn-cucumber-json-formatter-enoent)
 * [Why is `cypress-tags` missing?](#why-is-cypress-tags-missing)
 * [My JSON report isn't generated](#my-json-report-isnt-generated)
+* [JSON reports aren't generated in open / interactive mode](#json-reports-arent-generated-in-open--interactive-mode)
 
 ## `--env` / `tags` isn't picked up
 
@@ -25,3 +26,7 @@ The `cypress-tags` executable has been removed and made redundant. Specs contain
 ## My JSON report isn't generated
 
 You have likely stumbled upon a configuration caveat, see [docs/configuration.md: Caveats / Debugging](configuration.md#caveats--debugging).
+
+## JSON reports aren't generated in open / interactive mode
+
+JSON reports aren't typically generated in open / interactive mode. They rely on some events that aren't available in open-mode, at least not without `experimentalInteractiveRunEvents: true`. However, this experimental flag broke some time ago, ref. [cypress-io/cypress#18955](https://github.com/cypress-io/cypress/issues/18955).
