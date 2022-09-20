@@ -126,7 +126,7 @@ export function getStepDefinitionPatternsPost10(
         return pattern;
       }
     })
-    .map((pattern) => path.join(projectRoot, pattern));
+    .map((pattern) => ensureIsAbsolute(projectRoot, pattern));
 }
 
 export function getStepDefinitionPatternsPre10(
@@ -181,5 +181,7 @@ export function getStepDefinitionPatternsPre10(
         return pattern;
       }
     })
-    .map((pattern) => path.join(configuration.cypress.projectRoot, pattern));
+    .map((pattern) =>
+      ensureIsAbsolute(configuration.cypress.projectRoot, pattern)
+    );
 }
