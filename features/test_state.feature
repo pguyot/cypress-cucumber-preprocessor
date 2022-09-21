@@ -56,12 +56,16 @@ Feature: window.testState
       Feature: a feature name
         Scenario: a scenario name
           Given a step
+          And another step
       """
     And a file named "cypress/e2e/a.js" with:
       """
       const { Given } = require("@badeball/cypress-cucumber-preprocessor");
       Given("a step", function() {
         expect(testState.pickleStep.text).to.equal("a step");
+      });
+      Given("another step", function() {
+        expect(testState.pickleStep.text).to.equal("another step");
       });
       """
     When I run cypress

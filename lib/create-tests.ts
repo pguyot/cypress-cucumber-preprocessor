@@ -352,11 +352,11 @@ function createPickle(
 
     for (const step of steps) {
       if (step.hook) {
-        delete window.testState.pickleStep;
-
         const hook = step.hook;
 
         cy.then(() => {
+          delete window.testState.pickleStep;
+
           Cypress.log({
             name: "step",
             displayName: hook.keyword,
@@ -402,8 +402,6 @@ function createPickle(
             remainingSteps.shift();
           });
       } else if (step.pickleStep) {
-        window.testState.pickleStep = step.pickleStep;
-
         const pickleStep = step.pickleStep;
 
         const text = assertAndReturn(
@@ -422,6 +420,8 @@ function createPickle(
         );
 
         cy.then(() => {
+          window.testState.pickleStep = step.pickleStep;
+
           Cypress.log({
             name: "step",
             displayName: assertAndReturn(
