@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Correctly assign `testState.pickleStep`, fixes [#836](https://github.com/badeball/cypress-cucumber-preprocessor/issues/836).
+
 ## v13.0.1
 
 - Support absolute paths in `stepDefinitions`, fixes [#832](https://github.com/badeball/cypress-cucumber-preprocessor/issues/832).
