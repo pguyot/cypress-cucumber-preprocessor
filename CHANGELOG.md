@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v13.0.2
 
 - Correctly assign `testState.pickleStep`, fixes [#836](https://github.com/badeball/cypress-cucumber-preprocessor/issues/836).
 
