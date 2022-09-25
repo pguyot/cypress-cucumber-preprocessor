@@ -7,17 +7,21 @@ import { toByteArray } from "base64-js";
 import { PNG } from "pngjs";
 import { version as cypressVersion } from "cypress/package.json";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isObject(object: any): object is object {
   return typeof object === "object" && object != null;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function hasOwnProperty<X extends {}, Y extends PropertyKey>(
   obj: X,
   prop: Y
 ): obj is X & Record<Y, unknown> {
+  // eslint-disable-next-line no-prototype-builtins
   return obj.hasOwnProperty(prop);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function* traverseTree(object: any): Generator<object, void, any> {
   if (!isObject(object)) {
     throw new Error(`Expected object, got ${typeof object}`);
@@ -32,6 +36,7 @@ function* traverseTree(object: any): Generator<object, void, any> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function prepareJsonReport(tree: any) {
   for (const node of traverseTree(tree)) {
     if (hasOwnProperty(node, "duration")) {
@@ -116,9 +121,9 @@ Then(
     const actualJsonOutput = JSON.parse(jsonFile.toString());
 
     const embeddings: { data: string; mime_type: string }[] = actualJsonOutput
-      .flatMap((feature: any) => feature.elements)
-      .flatMap((element: any) => element.steps)
-      .flatMap((step: any) => step.embeddings ?? []);
+      .flatMap((feature) => feature.elements)
+      .flatMap((element) => element.steps)
+      .flatMap((step) => step.embeddings ?? []);
 
     if (embeddings.length === 0) {
       throw new Error("Expected to find an embedding in JSON, but found none");
@@ -133,10 +138,10 @@ Then(
 
     assert.strictEqual(embedding.mime_type, "image/png");
 
-    const png = await new Promise<any>((resolve, reject) => {
+    const png = await new Promise<PNG>((resolve, reject) => {
       new PNG().parse(
-        toByteArray(embedding.data).buffer,
-        function (error: any, data: any) {
+        Buffer.from(toByteArray(embedding.data)),
+        function (error, data) {
           if (error) {
             reject(error);
           } else {
@@ -146,7 +151,7 @@ Then(
       );
     });
 
-    let expectedDimensions;
+    let expectedDimensions: { width: number; height: number };
 
     /**
      * See https://github.com/cypress-io/cypress/pull/15686 and https://github.com/cypress-io/cypress/pull/17309.

@@ -59,8 +59,10 @@ function parsePrimitiveToken(token: Token) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TYield<T> = T extends Generator<infer R, any, any> ? R : never;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TReturn<T> = T extends Generator<any, infer R, any> ? R : never;
 
 interface IteratorYieldResult<TYield> {
@@ -101,7 +103,7 @@ class BufferedGenerator<T, TReturn, TNext> {
     return this.tokens[this.position];
   }
 
-  peak(n: number = 1) {
+  peak(n = 1) {
     return this.tokens[this.position + n];
   }
 }
@@ -142,6 +144,7 @@ export default class Parser {
     const values: Primitive[] = [];
 
     if (isObjectMode) {
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const key = expectToken(tokens.next()).value.value;
 
@@ -162,6 +165,7 @@ export default class Parser {
         }
       }
     } else {
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const value = parsePrimitiveToken(tokens.next());
 

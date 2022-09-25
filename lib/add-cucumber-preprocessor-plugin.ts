@@ -48,6 +48,7 @@ import { createTimestamp } from "./messages-helpers";
  * Work-around for the fact that some Cypress versions pre v10 were missing this property in their types.
  */
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface PluginConfigOptions {
       testFiles: string[];
@@ -55,6 +56,7 @@ declare global {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function memoize<T extends (...args: any[]) => any>(
   fn: T
 ): (...args: Parameters<T>) => ReturnType<T> {
@@ -214,7 +216,7 @@ export async function afterRunHandler(config: Cypress.PluginConfigOptions) {
   }
 }
 
-export async function beforeSpecHandler(config: Cypress.PluginConfigOptions) {
+export async function beforeSpecHandler(_config: Cypress.PluginConfigOptions) {
   currentSpecMessages = [];
 }
 

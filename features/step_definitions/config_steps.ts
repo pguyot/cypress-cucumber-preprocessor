@@ -6,6 +6,7 @@ import { insertValuesInConfigFile } from "../support/configFileUpdater";
 
 async function updateJsonConfiguration(
   absoluteConfigPath: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   additionalJsonContent: any
 ) {
   const existingConfig = JSON.parse(

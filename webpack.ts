@@ -7,6 +7,7 @@ import { compile } from "./lib/template";
 interface ILoaderContext {
   async: () => (err: Error | null, result?: string) => void;
   resourcePath: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   query: any;
 }
 

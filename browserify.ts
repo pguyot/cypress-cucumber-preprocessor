@@ -23,7 +23,7 @@ export function transform(
   let buffer = Buffer.alloc(0);
 
   return new Transform({
-    transform(chunk: any, encoding: string, done: TransformCallback) {
+    transform(chunk, encoding, done) {
       buffer = Buffer.concat([buffer, chunk]);
       done();
     },
@@ -35,6 +35,7 @@ export function transform(
         );
 
         debug(`compiled ${filepath}`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         done(e);
       }
@@ -51,6 +52,7 @@ type ICypressPreprocessorFile = EventEmitter & {
 
 function preprendTransformerToOptions(
   configuration: ICypressConfiguration,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any
 ) {
   let wrappedTransform;
