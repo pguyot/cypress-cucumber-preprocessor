@@ -6,6 +6,7 @@
 * [Why is `cypress-tags` missing?](#why-is-cypress-tags-missing)
 * [My JSON report isn't generated](#my-json-report-isnt-generated)
 * [JSON reports aren't generated in open / interactive mode](#json-reports-arent-generated-in-open--interactive-mode)
+* [I get `cypress_esbuild_preprocessor_1.createBundler is not a function`](#i-get-cypress_esbuild_preprocessor_1createbundler-is-not-a-function)
 
 ## `--env` / `tags` isn't picked up
 
@@ -30,3 +31,21 @@ You have likely stumbled upon a configuration caveat, see [docs/configuration.md
 ## JSON reports aren't generated in open / interactive mode
 
 JSON reports aren't typically generated in open / interactive mode. They rely on some events that aren't available in open-mode, at least not without `experimentalInteractiveRunEvents: true`. However, this experimental flag broke some time ago, ref. [cypress-io/cypress#18955](https://github.com/cypress-io/cypress/issues/18955).
+
+## I get `cypress_esbuild_preprocessor_1.createBundler is not a function`
+
+This can happen if you have a TypeScript Cypress configuration (IE. `cypress.config.ts` as opposed to `cypress.config.js`) similar to one of our examples and have a `tsconfig.json` _without_ `{ "compilerOptions": { "esModuleInterop": true } }`.
+
+If you're really adamant about _not_ using `esModuleInterop: true`, you can change
+
+```ts
+import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
+```
+
+.. to
+
+```ts
+import * as createBundler from "@bahmutov/cypress-esbuild-preprocessor";
+```
+
+However, I recommend just using `esModuleInterop: true` if you don't fully understand the implications of disabling it.
