@@ -5,9 +5,9 @@ Step definitions are resolved using search paths that are configurable through t
 ```json
 {
   "stepDefinitions": [
-    "cypress/e2e/[filepath]/**/*.{js,ts}",
-    "cypress/e2e/[filepath].{js,ts}",
-    "cypress/support/step_definitions/**/*.{js,ts}",
+    "[integration-directory]/[filepath]/**/*.{js,mjs,ts,tsx}",
+    "[integration-directory]/[filepath].{js,mjs,ts,tsx}",
+    "cypress/support/step_definitions/**/*.{js,mjs,ts,tsx}",
   ]
 }
 ```
@@ -17,6 +17,7 @@ This means that if you have a file `cypress/e2e/duckduckgo.feature`, it will mat
 * `cypress/e2e/duckduckgo/steps.ts`
 * `cypress/e2e/duckduckgo.ts`
 * `cypress/support/step_definitions/duckduckgo.ts`
+* `cypress/support/step_definitions/anything_else.ts`
 
 ## Hierarchy
 
